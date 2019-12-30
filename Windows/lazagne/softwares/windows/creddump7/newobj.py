@@ -52,15 +52,15 @@ class Obj(object):
        for special handling.
     """
 
-    def __new__(typ, name, address, space):
+    def __new__(cls, name, address, space):
         if name in globals():
             # This is a bit of "magic"
             # Could be replaced with a dict mapping type names to types
-            return globals()[name](name,address,space)
+            return globals()[name](name, address, space)
         elif name in builtin_types:
             return Primitive(name, address, space)
         else:
-            obj = object.__new__(typ)
+            obj = object.__new__(cls)
             return obj
     
     def __init__(self, name, address, space):
@@ -94,9 +94,9 @@ class Obj(object):
                 a_off, a_tp = get_obj_offset(types, [self.name, attr, i])
                 if a_tp == 'pointer':
                     ptp = get_ptr_type(self.name, [attr, i])
-                    l.append(Pointer(a_tp, self.address+a_off, self.space, ptp))
+                    l.append(Pointer(a_tp, self.address + a_off, self.space, ptp))
                 else:
-                    l.append(Obj(a_tp, self.address+a_off, self.space))
+                    l.append(Obj(a_tp, self.address + a_off, self.space))
             return l
         elif tp == 'pointer':
             # Can't just return a Obj here, since pointers need to also
@@ -128,7 +128,7 @@ class Obj(object):
         # Could also just return the list
         membs = [(k, v[0]) for k,v in types[self.name][1].items()]
         membs.sort(key=itemgetter(1))
-        return map(itemgetter(0),membs) + self.extra_members
+        return list(map(itemgetter(0),membs)) + self.extra_members
 
     def values(self):
         """Return a dictionary of this object's members and their values"""
@@ -186,8 +186,8 @@ class Primitive(Obj):
          value : the python primitive value of this type
     """
 
-    def __new__(typ, *args, **kwargs):
-        obj = object.__new__(typ)
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls)
         return obj
 
     def __init__(self, name, address, space):
@@ -215,8 +215,8 @@ class Pointer(Obj):
        the attribute will be looked up in the referenced
        object."""
 
-    def __new__(typ, *args, **kwargs):
-        obj = object.__new__(typ)
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls)
         return obj
 
     def __init__(self, name, address, space, ptr_type):
@@ -253,8 +253,8 @@ class _UNICODE_STRING(Obj):
       * The __str__ method returns the value of the Buffer.
     """
 
-    def __new__(typ, *args, **kwargs):
-        obj = object.__new__(typ)
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls)
         return obj
 
     def __str__(self):
@@ -267,8 +267,8 @@ class _UNICODE_STRING(Obj):
 
 
 class _CM_KEY_NODE(Obj):
-    def __new__(typ, *args, **kwargs):
-        obj = object.__new__(typ)
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls)
         return obj
 
     def getName(self):
@@ -277,8 +277,8 @@ class _CM_KEY_NODE(Obj):
 
 
 class _CM_KEY_VALUE(Obj):
-    def __new__(typ, *args, **kwargs):
-        obj = object.__new__(typ)
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls)
         return obj
 
     def getName(self):
@@ -287,8 +287,8 @@ class _CM_KEY_VALUE(Obj):
 
 
 class _CHILD_LIST(Obj):
-    def __new__(typ, *args, **kwargs):
-        obj = object.__new__(typ)
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls)
         return obj
 
     def getList(self):
@@ -301,8 +301,8 @@ class _CHILD_LIST(Obj):
 
 
 class _CM_KEY_INDEX(Obj):
-    def __new__(typ, *args, **kwargs):
-        obj = object.__new__(typ)
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls)
         return obj
 
     def getList(self):
