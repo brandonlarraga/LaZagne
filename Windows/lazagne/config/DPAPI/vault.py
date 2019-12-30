@@ -201,7 +201,7 @@ class VaultVcrd(DataStruct):
         self.description = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8")  # Unicode
         self.attributes_array_size = data.eat("L")
         # 12 is the size of the VAULT_ATTRIBUTE_MAP_ENTRY
-        self.attributes_num = self.attributes_array_size / 12
+        self.attributes_num = self.attributes_array_size // 12
         for i in range(self.attributes_num):
             # 12: size of VaultAttributeMapEntry Structure
             v_map_entry = VaultAttributeMapEntry(data.eat("12s"))
@@ -230,7 +230,7 @@ class VaultVsch(DataStruct):
         self.schema_guid = "%0x-%0x-%0x-%0x%0x-%0x%0x%0x%0x%0x%0x" % data.eat("L2H8B")
         self.vault_vsch_unknown_1 = data.eat("L")
         self.count = data.eat("L")
-        self.schema_name = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip('\x00\x00')
+        self.schema_name = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip(b'\x00\x00')
 
 
 class VaultAttributeItem(object):
@@ -299,9 +299,9 @@ class VaultSchemaPin(DataStruct):
         if self.sid_len > 0:
             self.sid = data.eat_sub(self.sid_len)
         self.id_resource = data.eat("L")
-        self.resource = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip('\x00\x00')
+        self.resource = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip(b'\x00\x00')
         self.id_password = data.eat("L")
-        self.authenticator = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip('\x00\x00')  # Password
+        self.authenticator = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip(b'\x00\x00')  # Password
         self.id_pin = data.eat("L")
         self.pin = data.eat_length_and_string("L")
 
@@ -327,11 +327,11 @@ class VaultSchemaWebPassword(DataStruct):
         self.count = data.eat("L")
         self.vault_schema_web_password_unknown1 = data.eat("L")
         self.id_identity = data.eat("L")
-        self.identity = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip('\x00\x00')
+        self.identity = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip(b'\x00\x00')
         self.id_resource = data.eat("L")
-        self.resource = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip('\x00\x00')
+        self.resource = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip(b'\x00\x00')
         self.id_authenticator = data.eat("L")
-        self.authenticator = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip('\x00\x00')
+        self.authenticator = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip(b'\x00\x00')
 
 
 class VaultSchemaActiveSync(DataStruct):
@@ -355,11 +355,11 @@ class VaultSchemaActiveSync(DataStruct):
         self.count = data.eat("L")
         self.vault_schema_activesync_unknown1 = data.eat("L")
         self.id_identity = data.eat("L")
-        self.identity = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip('\x00\x00')
+        self.identity = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip(b'\x00\x00')
         self.id_resource = data.eat("L")
-        self.resource = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip('\x00\x00')
+        self.resource = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip(b'\x00\x00')
         self.id_authenticator = data.eat("L")
-        self.authenticator = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip('\x00').encode('hex')
+        self.authenticator = data.eat_length_and_string("L").decode("UTF-16LE").encode("utf-8").rstrip(b'\x00').encode('hex')
 
 
 # Vault Schema Dict
@@ -474,7 +474,7 @@ class Vault(object):
                         }
 
                     # Parse value found
-                    for k, v in sorted(attributes_data.iteritems()):
+                    for k, v in sorted(attributes_data.items()):
                         # Parse decrypted data depending on its schema
                         dataout = v['schema'](v['data'])
 
