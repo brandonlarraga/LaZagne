@@ -27,6 +27,7 @@ class Vault(ModuleInfo):
                 self.debug(u'No Vaults found')
                 return
             else:
+                VAULT_ITEM_WIN, PVAULT_ITEM_WIN, VaultGetItemFunc = get_vault_objects_for_this_version_of_windows()
                 for i in range(cbVaults.value):
                     if vaultOpenVault(byref(vaults[i]), 0, byref(hVault)) == 0:
                         if hVault:
@@ -44,7 +45,7 @@ class Vault(ModuleInfo):
                                         if items[j].pName:
                                             values['Name'] = items[j].pName
 
-                                        if VaultGetItemFunc(hVault, items[j], pPasswordVaultItem) == 0
+                                        if VaultGetItemFunc(hVault, items[j], pPasswordVaultItem) == 0:
 
                                             password = pPasswordVaultItem.contents.pPassword.contents.data.string
                                             # Remove password too long
