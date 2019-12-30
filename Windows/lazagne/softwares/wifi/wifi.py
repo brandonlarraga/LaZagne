@@ -21,7 +21,10 @@ class Wifi(ModuleInfo):
         if constant.system_dpapi and constant.system_dpapi.unlocked:
             decrypted_blob = constant.system_dpapi.decrypt_wifi_blob(key)
             if decrypted_blob:
-                return decrypted_blob.decode(sys.getfilesystemencoding())
+                try:
+                    return decrypted_blob.decode(sys.getfilesystemencoding())
+                except UnicodeDecodeError:
+                    return str(decrypted_blob)
 
     def decrypt_using_netsh(self, ssid):
         """
@@ -84,7 +87,7 @@ class Wifi(ModuleInfo):
                                                 password = self.decrypt_using_netsh(ssid=values['SSID'])
 
                                             if password:
-                                                values['Password'] = password
+                                                values['Password'] = password.rstrip("\x00")
                                             else:
                                                 values['INFO'] = '[!] Password not found.'
                                         except Exception:
